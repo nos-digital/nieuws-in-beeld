@@ -11,5 +11,5 @@ import Foundation
 
 protocol APIClient
 {
-    func requestPhotos(completion: @escaping (Result<[Photo], Error>) -> Void)
+    func loadPhotos(completion: @escaping (Result<[Photo], Error>) -> Void)
 }

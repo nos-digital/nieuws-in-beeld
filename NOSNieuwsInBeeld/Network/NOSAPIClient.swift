@@ -18,7 +18,7 @@ struct NOSAPIClient: APIClient
     
     static let photos = URL(string: "https://public-api.nos.nl/feed/nieuws-in-beeld.json")!
     
-    func requestPhotos(completion: @escaping (Result<[Photo], Error>) -> Void)
+    func loadPhotos(completion: @escaping (Result<[Photo], Error>) -> Void)
     {
         let task = URLSession.shared.dataTask(with: NOSAPIClient.photos) { (data, response, error) in
             

@@ -10,14 +10,40 @@ import ScreenSaver
 
 class NieuwsInBeeldView: ScreenSaverView
 {
+    private let api: APIClient = NOSAPIClient()
+    
     override init?(frame: NSRect, isPreview: Bool)
     {
         super.init(frame: frame, isPreview: isPreview)
         
         animationTimeInterval = 1.0 / 30.0
+        
+        loadPhotos()
     }
     
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+    
+    // MARK: Data
+    
+    private lazy var photos: [Photo] = []
+    
+    private func loadPhotos()
+    {
+        api.loadPhotos { [weak self] result in
+            switch result
+            {
+                case .success(let photos): self?.updatePhotos(photos)
+                case .failure: break // ignore for now
+            }
+        }
+    }
+    
+    private func updatePhotos(_ photos: [Photo])
+    {
+        self.photos = photos
+    }
+    
+    // MARK: Animations
     
     override func startAnimation()
     {
