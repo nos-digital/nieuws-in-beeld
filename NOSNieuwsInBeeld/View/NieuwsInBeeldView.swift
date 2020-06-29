@@ -19,6 +19,7 @@ class NieuwsInBeeldView: ScreenSaverView
         animationTimeInterval = 1.0 / 30.0
         
         loadPhotos()
+        setupSubviews()
     }
     
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
@@ -26,6 +27,7 @@ class NieuwsInBeeldView: ScreenSaverView
     // MARK: Data
     
     private lazy var photos: [Photo] = []
+    private var photoIndex = 0
     
     private func loadPhotos()
     {
@@ -41,6 +43,31 @@ class NieuwsInBeeldView: ScreenSaverView
     private func updatePhotos(_ photos: [Photo])
     {
         self.photos = photos
+        showPhoto(at: photoIndex)
+    }
+    
+    private func showPhoto(at index: Int)
+    {
+        guard 0..<photos.count ~= index else { return }
+        
+        slideView.viewModel = SlideViewModel(image: photos[index].formats.last!.url.jpg)
+    }
+    
+    // MARK: Subviews
+    
+    private lazy var slideView = SlideView(viewModel: nil, api: api)
+    
+    private func setupSubviews()
+    {
+        slideView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(slideView)
+        
+        NSLayoutConstraint.activate([
+            slideView.topAnchor.constraint(equalTo: topAnchor),
+            slideView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            slideView.leftAnchor.constraint(equalTo: leftAnchor),
+            slideView.rightAnchor.constraint(equalTo: rightAnchor),
+        ])
     }
     
     // MARK: Animations
@@ -55,14 +82,19 @@ class NieuwsInBeeldView: ScreenSaverView
         super.stopAnimation()
     }
     
-    override func draw(_ rect: NSRect)
-    {
-        super.draw(rect)
-    }
-    
+    private var timeElapsed: TimeInterval = 0
     override func animateOneFrame()
     {
+        timeElapsed += animationTimeInterval
         
+        if timeElapsed >= 2
+        {
+            photoIndex = min(photos.count - 1, max(0, photoIndex + 1))
+            showPhoto(at: photoIndex)
+            timeElapsed = 0
+        }
+        
+        setNeedsDisplay(bounds)
     }
     
     override var hasConfigureSheet: Bool { false }

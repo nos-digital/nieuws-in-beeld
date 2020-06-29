@@ -6,7 +6,7 @@
 //  Copyright © 2020 App Department. All rights reserved.
 //
 
-import Foundation
+import ScreenSaver
 
 
 struct NOSAPIClient: APIClient
@@ -23,7 +23,12 @@ struct NOSAPIClient: APIClient
         let task = URLSession.shared.dataTask(with: NOSAPIClient.photos) { (data, response, error) in
             
             if let data = data {
-                self.handleData(data, completion: completion)
+                do {
+                    let photos = try JSONDecoder().decode([Photo].self, from: data)
+                    completion(.success(photos))
+                } catch {
+                    completion(.failure(error))
+                }
             } else if let error = error {
                 completion(.failure(error))
             } else {
@@ -34,13 +39,21 @@ struct NOSAPIClient: APIClient
         task.resume()
     }
     
-    private func handleData(_ data: Data, completion: (Result<[Photo], Error>) -> Void)
+    func loadImage(with url: URL, completion: @escaping (Result<NSImage, Error>) -> Void)
     {
-        do {
-            let photos = try JSONDecoder().decode([Photo].self, from: data)
-            completion(.success(photos))
-        } catch {
-            completion(.failure(error))
+        let task = URLSession.shared.downloadTask(with: url) { (location, response, error) in
+            if let location = location,
+                let image = NSImage(contentsOf: location)
+            {
+                completion(.success(image))
+            } else if let error = error
+            {
+                completion(.failure(error))
+            } else {
+                completion(.failure(NetworkError.unknown))
+            }
         }
+        
+        task.resume()
     }
 }
