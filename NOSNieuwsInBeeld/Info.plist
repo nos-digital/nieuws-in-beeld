@@ -21,6 +21,6 @@
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2020 App Department. All rights reserved.</string>
 	<key>NSPrincipalClass</key>
-	<string>NOSNieuwsInBeeldView</string>
+	<string>NOSNieuwsInBeeld.NieuwsInBeeldView</string>
 </dict>
 </plist>

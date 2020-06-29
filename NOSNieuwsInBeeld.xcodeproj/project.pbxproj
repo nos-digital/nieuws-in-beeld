@@ -7,15 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		43624BEB24AA8E2900E7F33F /* NOSNieuwsInBeeldView.h in Headers */ = {isa = PBXBuildFile; fileRef = 43624BEA24AA8E2900E7F33F /* NOSNieuwsInBeeldView.h */; };
-		43624BED24AA8E2900E7F33F /* NOSNieuwsInBeeldView.m in Sources */ = {isa = PBXBuildFile; fileRef = 43624BEC24AA8E2900E7F33F /* NOSNieuwsInBeeldView.m */; };
+		43624BF524AA8E4200E7F33F /* NieuwsInBeeldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43624BF424AA8E4200E7F33F /* NieuwsInBeeldView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		43624BE724AA8E2900E7F33F /* NOSNieuwsInBeeld.saver */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NOSNieuwsInBeeld.saver; sourceTree = BUILT_PRODUCTS_DIR; };
-		43624BEA24AA8E2900E7F33F /* NOSNieuwsInBeeldView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NOSNieuwsInBeeldView.h; sourceTree = "<group>"; };
-		43624BEC24AA8E2900E7F33F /* NOSNieuwsInBeeldView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NOSNieuwsInBeeldView.m; sourceTree = "<group>"; };
 		43624BEE24AA8E2900E7F33F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		43624BF424AA8E4200E7F33F /* NieuwsInBeeldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NieuwsInBeeldView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,11 +46,18 @@
 		43624BE924AA8E2900E7F33F /* NOSNieuwsInBeeld */ = {
 			isa = PBXGroup;
 			children = (
-				43624BEA24AA8E2900E7F33F /* NOSNieuwsInBeeldView.h */,
-				43624BEC24AA8E2900E7F33F /* NOSNieuwsInBeeldView.m */,
+				43624BF724AA8FD900E7F33F /* View */,
 				43624BEE24AA8E2900E7F33F /* Info.plist */,
 			);
 			path = NOSNieuwsInBeeld;
+			sourceTree = "<group>";
+		};
+		43624BF724AA8FD900E7F33F /* View */ = {
+			isa = PBXGroup;
+			children = (
+				43624BF424AA8E4200E7F33F /* NieuwsInBeeldView.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -62,7 +67,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				43624BEB24AA8E2900E7F33F /* NOSNieuwsInBeeldView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -98,6 +102,7 @@
 				TargetAttributes = {
 					43624BE624AA8E2900E7F33F = {
 						CreatedOnToolsVersion = 11.5;
+						LastSwiftMigration = 1150;
 					};
 				};
 			};
@@ -134,7 +139,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				43624BED24AA8E2900E7F33F /* NOSNieuwsInBeeldView.m in Sources */,
+				43624BF524AA8E4200E7F33F /* NieuwsInBeeldView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -253,13 +258,21 @@
 		43624BF224AA8E2900E7F33F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = J5YAYB645T;
 				INFOPLIST_FILE = NOSNieuwsInBeeld/Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Screen Savers";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.app-department.NOSNieuwsInBeeld";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = saver;
 			};
 			name = Debug;
@@ -267,13 +280,20 @@
 		43624BF324AA8E2900E7F33F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = J5YAYB645T;
 				INFOPLIST_FILE = NOSNieuwsInBeeld/Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Screen Savers";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.app-department.NOSNieuwsInBeeld";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = saver;
 			};
 			name = Release;
