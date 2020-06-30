@@ -11,6 +11,7 @@ import ScreenSaver
 class NieuwsInBeeldView: ScreenSaverView
 {
     private let api: APIClient = NOSAPIClient()
+    private let slideDuration: TimeInterval = 2
     
     override init?(frame: NSRect, isPreview: Bool)
     {
@@ -43,6 +44,7 @@ class NieuwsInBeeldView: ScreenSaverView
     private func updatePhotos(_ photos: [Photo])
     {
         self.photos = photos
+        photoIndex = 0
         showPhoto(at: photoIndex)
     }
     
@@ -50,24 +52,56 @@ class NieuwsInBeeldView: ScreenSaverView
     {
         guard 0..<photos.count ~= index else { return }
         
-        slideView.viewModel = SlideViewModel(image: photos[index].formats.last!.url.jpg)
+        let viewModel = SlideViewModel(image: photos[index].formats.last!.url.jpg)
+        
+        if currentSlideView.viewModel == nil
+        {
+            currentSlideView.viewModel = viewModel
+        }
+        else
+        {
+            nextSlideView.viewModel = viewModel
+            
+            NSAnimationContext.beginGrouping()
+            NSAnimationContext.current.duration = 1
+                
+            currentSlideView.animator().isHidden = true
+            nextSlideView.animator().isHidden = false
+            
+            NSAnimationContext.current.completionHandler = {
+                let current = self.currentSlideView
+                self.currentSlideView = self.nextSlideView
+                self.nextSlideView = current
+            }
+            NSAnimationContext.endGrouping()
+            
+        }
     }
     
     // MARK: Subviews
     
-    private lazy var slideView = SlideView(viewModel: nil, api: api)
-    
+    private lazy var currentSlideView = SlideView(viewModel: nil, api: api)
+    private lazy var nextSlideView = SlideView(viewModel: nil, api: api)
+
     private func setupSubviews()
     {
-        slideView.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(slideView)
+        var constraints: [NSLayoutConstraint] = []
         
-        NSLayoutConstraint.activate([
-            slideView.topAnchor.constraint(equalTo: topAnchor),
-            slideView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            slideView.leftAnchor.constraint(equalTo: leftAnchor),
-            slideView.rightAnchor.constraint(equalTo: rightAnchor),
-        ])
+        [currentSlideView, nextSlideView].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            addSubview($0)
+            
+            constraints.append(contentsOf: [
+                $0.topAnchor.constraint(equalTo: topAnchor),
+                $0.bottomAnchor.constraint(equalTo: bottomAnchor),
+                $0.leftAnchor.constraint(equalTo: leftAnchor),
+                $0.rightAnchor.constraint(equalTo: rightAnchor),
+            ])
+        }
+        
+        NSLayoutConstraint.activate(constraints)
+        
+        nextSlideView.isHidden = true
     }
     
     // MARK: Animations
@@ -87,14 +121,19 @@ class NieuwsInBeeldView: ScreenSaverView
     {
         timeElapsed += animationTimeInterval
         
-        if timeElapsed >= 2
+        if timeElapsed >= slideDuration
         {
-            photoIndex = min(photos.count - 1, max(0, photoIndex + 1))
+            advancePhotoIndex()
             showPhoto(at: photoIndex)
             timeElapsed = 0
         }
         
         setNeedsDisplay(bounds)
+    }
+    
+    private func advancePhotoIndex()
+    {
+        photoIndex = min(photos.count - 1, max(0, photoIndex + 1))
     }
     
     override var hasConfigureSheet: Bool { false }
