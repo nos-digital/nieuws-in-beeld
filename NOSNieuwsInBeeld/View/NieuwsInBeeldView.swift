@@ -11,7 +11,8 @@ import ScreenSaver
 class NieuwsInBeeldView: ScreenSaverView
 {
     private let api: APIClient = NOSAPIClient()
-    private let slideDuration: TimeInterval = 2
+    private let slideDuration: TimeInterval = 5
+    private let crossFadeDuration: TimeInterval = 0.3
     
     override init?(frame: NSRect, isPreview: Bool)
     {
@@ -29,6 +30,7 @@ class NieuwsInBeeldView: ScreenSaverView
     
     private lazy var photos: [Photo] = []
     private var photoIndex = 0
+    private var nextPhotoIndex: Int { min(photos.count - 1, max(0, photoIndex + 1)) }
     
     private func loadPhotos()
     {
@@ -52,42 +54,51 @@ class NieuwsInBeeldView: ScreenSaverView
     {
         guard 0..<photos.count ~= index else { return }
         
-        let viewModel = SlideViewModel(image: photos[index].formats.last!.url.jpg)
+        photoIndex = index
         
-        if currentSlideView.viewModel == nil
+        if currentSlide.viewModel == nil
         {
-            currentSlideView.viewModel = viewModel
+            currentSlide.viewModel = SlideViewModel(image: photos[index].formats.last!.url.jpg)
+            preloadPhoto(at: nextPhotoIndex)
         }
         else
         {
-            nextSlideView.viewModel = viewModel
-            
-            NSAnimationContext.beginGrouping()
-            NSAnimationContext.current.duration = 1
+            NSAnimationContext.runAnimationGroup({ context in
+                context.duration = self.crossFadeDuration
                 
-            currentSlideView.animator().isHidden = true
-            nextSlideView.animator().isHidden = false
-            
-            NSAnimationContext.current.completionHandler = {
-                let current = self.currentSlideView
-                self.currentSlideView = self.nextSlideView
-                self.nextSlideView = current
-            }
-            NSAnimationContext.endGrouping()
-            
+                self.currentSlide.alphaValue = 0
+                self.nextSlide.isHidden = false
+            },
+                                                 completionHandler: {
+                                                    let current = self.currentSlide
+                                                    let next = self.nextSlide
+                                                    
+                                                    current.isHidden = true
+                                                    current.alphaValue = 1
+                                                    
+                                                    self.currentSlide = next
+                                                    self.nextSlide = current
+                                                    self.preloadPhoto(at: self.nextPhotoIndex)
+            })
         }
+    }
+    
+    private func preloadPhoto(at index: Int)
+    {
+        guard 0..<photos.count ~= index else { return }
+        nextSlide.viewModel = SlideViewModel(image: photos[index].formats.last!.url.jpg)
     }
     
     // MARK: Subviews
     
-    private lazy var currentSlideView = SlideView(viewModel: nil, api: api)
-    private lazy var nextSlideView = SlideView(viewModel: nil, api: api)
+    private lazy var currentSlide = SlideView(api: api)
+    private lazy var nextSlide = SlideView(api: api)
 
     private func setupSubviews()
     {
         var constraints: [NSLayoutConstraint] = []
-        
-        [currentSlideView, nextSlideView].forEach {
+
+        [currentSlide, nextSlide].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             addSubview($0)
             
@@ -101,7 +112,7 @@ class NieuwsInBeeldView: ScreenSaverView
         
         NSLayoutConstraint.activate(constraints)
         
-        nextSlideView.isHidden = true
+        nextSlide.isHidden = true
     }
     
     // MARK: Animations
@@ -123,17 +134,11 @@ class NieuwsInBeeldView: ScreenSaverView
         
         if timeElapsed >= slideDuration
         {
-            advancePhotoIndex()
-            showPhoto(at: photoIndex)
+            showPhoto(at: nextPhotoIndex)
             timeElapsed = 0
         }
         
         setNeedsDisplay(bounds)
-    }
-    
-    private func advancePhotoIndex()
-    {
-        photoIndex = min(photos.count - 1, max(0, photoIndex + 1))
     }
     
     override var hasConfigureSheet: Bool { false }

@@ -25,16 +25,13 @@ class SlideView: NSView
     }
     var api: APIClient
     
-    init(viewModel: SlideViewModel?, api: APIClient = NOSAPIClient())
+    init(api: APIClient = NOSAPIClient())
     {
-        self.viewModel = viewModel
         self.api = api
         
         super.init(frame: .zero)
         
         setupSubviews()
-        
-        loadImage()
     }
     
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
@@ -63,6 +60,8 @@ class SlideView: NSView
     
     private func setupSubviews()
     {
+        layer = CALayer()
+        
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.imageScaling = .scaleProportionallyUpOrDown
         addSubview(imageView)
