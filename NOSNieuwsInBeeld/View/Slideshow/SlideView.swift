@@ -14,6 +14,7 @@ struct SlideViewModel
     var image: URL
     var title: String
     var description: String
+    var copyright: String
 }
 
 private class ImageView: NSView
@@ -66,6 +67,62 @@ private class GradientView: NSView
     }
 }
 
+private class InsetLabel: NSView
+{
+    private let label: NSTextField = {
+        let label = NSTextField(labelWithString: "")
+        label.font = .systemFont(ofSize: 14, weight: .bold)
+        label.textColor = .white
+        label.alignment = .center
+        return label
+    }()
+    
+    var insets: NSEdgeInsets = .init() {
+        didSet {
+            needsLayout = true
+        }
+    }
+    
+    var stringValue: String {
+        get { label.stringValue }
+        set { label.stringValue = newValue }
+    }
+    
+    override init(frame frameRect: NSRect)
+    {
+        super.init(frame: frameRect)
+    
+        wantsLayer = true
+        layer?.backgroundColor = NSColor.black.withAlphaComponent(0.4).cgColor
+    
+        addSubview(label)
+    }
+    
+    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+    
+    func sizeThatFits(_ size: CGSize) -> CGSize
+    {
+        let availableSize = CGSize(width: max(0, size.width - insets.left - insets.right),
+                                   height: max(0, size.height - insets.top - insets.bottom))
+        
+        var labelSize = label.sizeThatFits(availableSize)
+        labelSize.width += insets.left + insets.right
+        labelSize.height += insets.top + insets.bottom
+        
+        return labelSize
+    }
+    
+    override func layout()
+    {
+        super.layout()
+        
+        let availableSize = CGSize(width: max(0, bounds.size.width - insets.left - insets.right),
+                                   height: max(0, bounds.size.height - insets.top - insets.bottom))
+        let labelSize = label.sizeThatFits(availableSize)
+        label.frame = CGRect(x: insets.left, y: insets.bottom, width: availableSize.width, height: labelSize.height)
+    }
+}
+
 class SlideView: NSView
 {
     var onImageLoaded: (() -> Void)?
@@ -79,6 +136,7 @@ class SlideView: NSView
                 
                 titleLabel.stringValue = viewModel.title
                 descriptionLabel.stringValue = viewModel.description
+                copyrightLabel.stringValue = viewModel.copyright
                 
                 needsLayout = true
             }
@@ -149,6 +207,12 @@ class SlideView: NSView
         return label
     }()
     
+    private let copyrightLabel: InsetLabel = {
+        let label = InsetLabel()
+        label.insets = NSEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+        return label
+    }()
+    
     private let gradient: GradientView = {
         let gradient = GradientView(frame: .zero)
         gradient.locations = [0, 1]
@@ -160,7 +224,7 @@ class SlideView: NSView
     {
         layer = CALayer()
         
-        [imageView, gradient, titleLabel, descriptionLabel].forEach { addSubview($0) }
+        [imageView, gradient, titleLabel, descriptionLabel, copyrightLabel].forEach { addSubview($0) }
     }
     
     private let insets = NSEdgeInsets(top: 0, left: 100, bottom: 100, right: 100)
@@ -180,12 +244,27 @@ class SlideView: NSView
         var origin = CGPoint(x: (bounds.size.width - availableSize.width) / 2,
                              y: insets.bottom + descriptionSize.height)
         
-        descriptionLabel.frame = CGRect(x: origin.x, y: origin.y, width: availableSize.width, height: descriptionSize.height)
+        descriptionLabel.frame = CGRect(x: origin.x,
+                                        y: origin.y,
+                                        width: availableSize.width,
+                                        height: descriptionSize.height)
         origin.y += titleDescriptionMargin + titleSize.height
         
-        titleLabel.frame = CGRect(x: origin.x, y: origin.y, width: availableSize.width, height: titleSize.height)
+        titleLabel.frame = CGRect(x: origin.x,
+                                  y: origin.y,
+                                  width: availableSize.width,
+                                  height: titleSize.height)
         
-        gradient.frame = CGRect(x: 0, y: 0, width: bounds.width, height: origin.y + 100)
+        gradient.frame = CGRect(x: 0,
+                                y: 0,
+                                width: bounds.width,
+                                height: origin.y + 100)
+        
+        let copyrightSize = copyrightLabel.sizeThatFits(.zero)
+        copyrightLabel.frame = CGRect(x: bounds.width - copyrightSize.width,
+                                      y: 0,
+                                      width: copyrightSize.width,
+                                      height: copyrightSize.height)
     }
     
     // MARK: Animation

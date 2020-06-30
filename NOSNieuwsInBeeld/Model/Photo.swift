@@ -37,6 +37,7 @@ extension SlideViewModel
     {
         self.init(image: photo.formats.last!.url.jpg,
                   title: photo.title,
-                  description: photo.description)
+                  description: photo.description,
+                  copyright: photo.copyright)
     }
 }
