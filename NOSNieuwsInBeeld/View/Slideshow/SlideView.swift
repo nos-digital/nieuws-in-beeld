@@ -12,6 +12,8 @@ import ScreenSaver
 struct SlideViewModel
 {
     var image: URL
+    var title: String
+    var description: String
 }
 
 private class ImageView: NSView
@@ -32,6 +34,38 @@ private class ImageView: NSView
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 }
 
+private class GradientView: NSView
+{
+    let gradientLayer = CAGradientLayer()
+    
+    var colors: [NSColor] = [] {
+        didSet {
+            gradientLayer.colors = colors.map { $0.cgColor }
+        }
+    }
+    var locations: [NSNumber] = [] {
+        didSet {
+            gradientLayer.locations = locations
+        }
+    }
+    
+    override init(frame frameRect: NSRect)
+    {
+        super.init(frame: frameRect)
+        
+        layer = gradientLayer
+    }
+    
+    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+    
+    override func layout()
+    {
+        super.layout()
+        
+        gradientLayer.frame = bounds
+    }
+}
+
 class SlideView: NSView
 {
     var onImageLoaded: (() -> Void)?
@@ -39,9 +73,18 @@ class SlideView: NSView
     var viewModel: SlideViewModel? {
         didSet {
             imageView.image = nil
-            loadImage()
+            if let viewModel = viewModel
+            {
+                loadImage()
+                
+                titleLabel.stringValue = viewModel.title
+                descriptionLabel.stringValue = viewModel.description
+                
+                needsLayout = true
+            }
         }
     }
+    
     var api: APIClient
     
     init(api: APIClient = NOSAPIClient())
@@ -77,11 +120,72 @@ class SlideView: NSView
     
     private let imageView = ImageView()
     
+    private let textShadow: NSShadow = {
+        let shadow = NSShadow()
+        shadow.shadowColor = .black
+        shadow.shadowBlurRadius = 2
+        shadow.shadowOffset = NSSize(width: 0, height: 1)
+        return shadow
+    }()
+    private lazy var titleLabel: NSTextField = {
+        let label = NSTextField(labelWithString: "")
+        label.font = .systemFont(ofSize: 32, weight: .bold)
+        label.textColor = .white
+        label.alignment = .center
+        label.lineBreakMode = .byWordWrapping
+        label.maximumNumberOfLines = .max
+        label.shadow = textShadow
+        return label
+    }()
+    
+    private lazy var descriptionLabel: NSTextField = {
+        let label = NSTextField(labelWithString: "")
+        label.font = .systemFont(ofSize: 24, weight: .regular)
+        label.textColor = .white
+        label.alignment = .center
+        label.lineBreakMode = .byWordWrapping
+        label.maximumNumberOfLines = .max
+        label.shadow = textShadow
+        return label
+    }()
+    
+    private let gradient: GradientView = {
+        let gradient = GradientView(frame: .zero)
+        gradient.locations = [0, 1]
+        gradient.colors = [NSColor.black.withAlphaComponent(0.5), NSColor.black.withAlphaComponent(0)]
+        return gradient
+    }()
+    
     private func setupSubviews()
     {
         layer = CALayer()
         
-        addSubview(imageView)
+        [imageView, gradient, titleLabel, descriptionLabel].forEach { addSubview($0) }
+    }
+    
+    private let insets = NSEdgeInsets(top: 0, left: 100, bottom: 100, right: 100)
+    private let titleDescriptionMargin: CGFloat = 32
+    
+    override func layout()
+    {
+        super.layout()
+        
+        var availableSize = bounds.size
+        availableSize.width -= insets.left + insets.right
+        availableSize.width = min(availableSize.width, 800)
+        
+        let titleSize = titleLabel.sizeThatFits(availableSize)
+        let descriptionSize = descriptionLabel.sizeThatFits(availableSize)
+        
+        var origin = CGPoint(x: (bounds.size.width - availableSize.width) / 2,
+                             y: insets.bottom + descriptionSize.height)
+        
+        descriptionLabel.frame = CGRect(x: origin.x, y: origin.y, width: availableSize.width, height: descriptionSize.height)
+        origin.y += titleDescriptionMargin + titleSize.height
+        
+        titleLabel.frame = CGRect(x: origin.x, y: origin.y, width: availableSize.width, height: titleSize.height)
+        
+        gradient.frame = CGRect(x: 0, y: 0, width: bounds.width, height: origin.y + 100)
     }
     
     // MARK: Animation

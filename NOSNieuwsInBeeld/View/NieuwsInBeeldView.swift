@@ -37,7 +37,7 @@ class NieuwsInBeeldView: ScreenSaverView
         api.loadPhotos { [weak self] result in
             switch result
             {
-                case .success(let photos): self?.updatePhotos(photos)
+                case .success(let photos): DispatchQueue.main.async { self?.updatePhotos(photos) }
                 case .failure: break // ignore for now
             }
         }
@@ -58,7 +58,7 @@ class NieuwsInBeeldView: ScreenSaverView
         
         if currentSlide.viewModel == nil
         {
-            currentSlide.viewModel = SlideViewModel(image: photos[index].formats.last!.url.jpg)
+            currentSlide.viewModel = SlideViewModel(photo: photos[index])
             currentSlide.isHidden = true
             currentSlide.onImageLoaded = { [weak self] in
                 guard let self = self else { return }
@@ -100,7 +100,7 @@ class NieuwsInBeeldView: ScreenSaverView
     private func preloadPhoto(at index: Int)
     {
         guard 0..<photos.count ~= index else { return }
-        nextSlide.viewModel = SlideViewModel(image: photos[index].formats.last!.url.jpg)
+        nextSlide.viewModel = SlideViewModel(photo: photos[index])
     }
     
     // MARK: Subviews

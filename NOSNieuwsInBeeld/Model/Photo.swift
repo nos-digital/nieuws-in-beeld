@@ -29,3 +29,14 @@ struct Photo: Codable, Identifiable
     var copyright: String
     var formats: [Format]
 }
+
+
+extension SlideViewModel
+{
+    init(photo: Photo)
+    {
+        self.init(image: photo.formats.last!.url.jpg,
+                  title: photo.title,
+                  description: photo.description)
+    }
+}
