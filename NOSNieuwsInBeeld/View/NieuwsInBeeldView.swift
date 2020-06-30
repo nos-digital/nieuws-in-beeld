@@ -11,8 +11,8 @@ import ScreenSaver
 class NieuwsInBeeldView: ScreenSaverView
 {
     private let api: APIClient = NOSAPIClient()
-    private let slideDuration: TimeInterval = 5
-    private let crossFadeDuration: TimeInterval = 0.3
+    private let slideDuration: TimeInterval = 10
+    private let crossFadeDuration: TimeInterval = 1
     
     override init?(frame: NSRect, isPreview: Bool)
     {
@@ -59,15 +59,29 @@ class NieuwsInBeeldView: ScreenSaverView
         if currentSlide.viewModel == nil
         {
             currentSlide.viewModel = SlideViewModel(image: photos[index].formats.last!.url.jpg)
-            preloadPhoto(at: nextPhotoIndex)
+            currentSlide.isHidden = true
+            currentSlide.onImageLoaded = { [weak self] in
+                guard let self = self else { return }
+                
+                self.currentSlide.onImageLoaded = nil
+                self.currentSlide.animateImage(duration: self.slideDuration + self.crossFadeDuration)
+                NSAnimationContext.runAnimationGroup { context in
+                    context.duration = self.crossFadeDuration
+                    
+                    self.currentSlide.isHidden = false
+                }
+                
+                self.preloadPhoto(at: self.nextPhotoIndex)
+            }
         }
         else
         {
+            nextSlide.animateImage(duration: slideDuration + crossFadeDuration)
             NSAnimationContext.runAnimationGroup({ context in
-                context.duration = self.crossFadeDuration
+                context.duration = crossFadeDuration
                 
-                self.currentSlide.alphaValue = 0
-                self.nextSlide.isHidden = false
+                currentSlide.alphaValue = 0
+                nextSlide.isHidden = false
             },
                                                  completionHandler: {
                                                     let current = self.currentSlide
@@ -96,23 +110,13 @@ class NieuwsInBeeldView: ScreenSaverView
 
     private func setupSubviews()
     {
-        var constraints: [NSLayoutConstraint] = []
-
-        [currentSlide, nextSlide].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
-            addSubview($0)
-            
-            constraints.append(contentsOf: [
-                $0.topAnchor.constraint(equalTo: topAnchor),
-                $0.bottomAnchor.constraint(equalTo: bottomAnchor),
-                $0.leftAnchor.constraint(equalTo: leftAnchor),
-                $0.rightAnchor.constraint(equalTo: rightAnchor),
-            ])
-        }
-        
-        NSLayoutConstraint.activate(constraints)
-        
+        [currentSlide, nextSlide].forEach { addSubview($0) }
         nextSlide.isHidden = true
+    }
+    
+    override func layout() {
+        super.layout()
+        [currentSlide, nextSlide].forEach { $0.frame = bounds }
     }
     
     // MARK: Animations
