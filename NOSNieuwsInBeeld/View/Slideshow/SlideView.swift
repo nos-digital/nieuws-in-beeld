@@ -77,9 +77,12 @@ private class InsetLabel: NSView
         return label
     }()
     
-    var insets: NSEdgeInsets = .init() {
+    var insets: NSDirectionalEdgeInsets = .init() {
         didSet {
-            needsLayout = true
+            labelLeadingConstraint.constant = insets.leading
+            labelTrailingConstraint.constant = -insets.trailing
+            labelTopConstraint.constant = insets.top
+            labelBottomConstraint.constant = -insets.bottom
         }
     }
     
@@ -88,6 +91,11 @@ private class InsetLabel: NSView
         set { label.stringValue = newValue }
     }
     
+    private lazy var labelLeadingConstraint = label.leadingAnchor.constraint(equalTo: leadingAnchor)
+    private lazy var labelTrailingConstraint = label.trailingAnchor.constraint(equalTo: trailingAnchor)
+    private lazy var labelTopConstraint = label.topAnchor.constraint(equalTo: topAnchor)
+    private lazy var labelBottomConstraint = label.bottomAnchor.constraint(equalTo: bottomAnchor)
+    
     override init(frame frameRect: NSRect)
     {
         super.init(frame: frameRect)
@@ -95,32 +103,16 @@ private class InsetLabel: NSView
         wantsLayer = true
         layer?.backgroundColor = NSColor.black.withAlphaComponent(0.4).cgColor
     
+        label.translatesAutoresizingMaskIntoConstraints = false
         addSubview(label)
+        
+        NSLayoutConstraint.activate([
+            labelLeadingConstraint, labelTrailingConstraint,
+            labelTopConstraint, labelBottomConstraint
+        ])
     }
     
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
-    
-    func sizeThatFits(_ size: CGSize) -> CGSize
-    {
-        let availableSize = CGSize(width: max(0, size.width - insets.left - insets.right),
-                                   height: max(0, size.height - insets.top - insets.bottom))
-        
-        var labelSize = label.sizeThatFits(availableSize)
-        labelSize.width += insets.left + insets.right
-        labelSize.height += insets.top + insets.bottom
-        
-        return labelSize
-    }
-    
-    override func layout()
-    {
-        super.layout()
-        
-        let availableSize = CGSize(width: max(0, bounds.size.width - insets.left - insets.right),
-                                   height: max(0, bounds.size.height - insets.top - insets.bottom))
-        let labelSize = label.sizeThatFits(availableSize)
-        label.frame = CGRect(x: insets.left, y: insets.bottom, width: availableSize.width, height: labelSize.height)
-    }
 }
 
 class SlideView: NSView
@@ -137,8 +129,6 @@ class SlideView: NSView
                 titleLabel.stringValue = viewModel.title
                 descriptionLabel.stringValue = viewModel.description
                 copyrightLabel.stringValue = viewModel.copyright
-                
-                needsLayout = true
             }
         }
     }
@@ -187,9 +177,9 @@ class SlideView: NSView
     }()
     private lazy var titleLabel: NSTextField = {
         let label = NSTextField(labelWithString: "")
-        label.font = .systemFont(ofSize: 32, weight: .bold)
+        label.font = .systemFont(ofSize: 40, weight: .bold)
         label.textColor = .white
-        label.alignment = .center
+        label.alignment = .left
         label.lineBreakMode = .byWordWrapping
         label.maximumNumberOfLines = .max
         label.shadow = textShadow
@@ -198,9 +188,9 @@ class SlideView: NSView
     
     private lazy var descriptionLabel: NSTextField = {
         let label = NSTextField(labelWithString: "")
-        label.font = .systemFont(ofSize: 24, weight: .regular)
+        label.font = .systemFont(ofSize: 32, weight: .regular)
         label.textColor = .white
-        label.alignment = .center
+        label.alignment = .left
         label.lineBreakMode = .byWordWrapping
         label.maximumNumberOfLines = .max
         label.shadow = textShadow
@@ -209,7 +199,7 @@ class SlideView: NSView
     
     private let copyrightLabel: InsetLabel = {
         let label = InsetLabel()
-        label.insets = NSEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+        label.insets = NSDirectionalEdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5)
         return label
     }()
     
@@ -224,47 +214,28 @@ class SlideView: NSView
     {
         layer = CALayer()
         
+        [gradient, titleLabel, descriptionLabel, copyrightLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         [imageView, gradient, titleLabel, descriptionLabel, copyrightLabel].forEach { addSubview($0) }
-    }
-    
-    private let insets = NSEdgeInsets(top: 0, left: 100, bottom: 100, right: 100)
-    private let titleDescriptionMargin: CGFloat = 32
-    
-    override func layout()
-    {
-        super.layout()
         
-        var availableSize = bounds.size
-        availableSize.width -= insets.left + insets.right
-        availableSize.width = min(availableSize.width, 800)
-        
-        let titleSize = titleLabel.sizeThatFits(availableSize)
-        let descriptionSize = descriptionLabel.sizeThatFits(availableSize)
-        
-        var origin = CGPoint(x: (bounds.size.width - availableSize.width) / 2,
-                             y: insets.bottom + descriptionSize.height)
-        
-        descriptionLabel.frame = CGRect(x: origin.x,
-                                        y: origin.y,
-                                        width: availableSize.width,
-                                        height: descriptionSize.height)
-        origin.y += titleDescriptionMargin + titleSize.height
-        
-        titleLabel.frame = CGRect(x: origin.x,
-                                  y: origin.y,
-                                  width: availableSize.width,
-                                  height: titleSize.height)
-        
-        gradient.frame = CGRect(x: 0,
-                                y: 0,
-                                width: bounds.width,
-                                height: origin.y + 100)
-        
-        let copyrightSize = copyrightLabel.sizeThatFits(.zero)
-        copyrightLabel.frame = CGRect(x: bounds.width - copyrightSize.width,
-                                      y: 0,
-                                      width: copyrightSize.width,
-                                      height: copyrightSize.height)
+        NSLayoutConstraint.activate([
+            descriptionLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -24),
+            descriptionLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
+            descriptionLabel.trailingAnchor.constraint(lessThanOrEqualTo: copyrightLabel.leadingAnchor),
+            descriptionLabel.widthAnchor.constraint(lessThanOrEqualTo: widthAnchor, multiplier: 0.5),
+            
+            titleLabel.bottomAnchor.constraint(equalTo: descriptionLabel.topAnchor, constant: -16),
+            titleLabel.leadingAnchor.constraint(equalTo: descriptionLabel.leadingAnchor),
+            titleLabel.trailingAnchor.constraint(lessThanOrEqualTo: copyrightLabel.leadingAnchor),
+            titleLabel.widthAnchor.constraint(lessThanOrEqualToConstant: 800),
+            
+            copyrightLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
+            copyrightLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
+            
+            gradient.leadingAnchor.constraint(equalTo: leadingAnchor),
+            gradient.trailingAnchor.constraint(equalTo: trailingAnchor),
+            gradient.bottomAnchor.constraint(equalTo: bottomAnchor),
+            gradient.topAnchor.constraint(equalTo: titleLabel.topAnchor, constant: -50)
+        ])
     }
     
     // MARK: Animation
