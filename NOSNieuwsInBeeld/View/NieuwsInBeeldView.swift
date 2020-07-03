@@ -30,7 +30,7 @@ class NieuwsInBeeldView: ScreenSaverView
     
     private lazy var photos: [Photo] = []
     private var photoIndex = 0
-    private var nextPhotoIndex: Int { min(photos.count - 1, max(0, photoIndex + 1)) }
+    private var nextPhotoIndex: Int { 0..<photos.count ~= photoIndex + 1 ? photoIndex + 1 : 0 }
     
     private func loadPhotos()
     {
