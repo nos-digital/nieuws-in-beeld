@@ -11,6 +11,8 @@ import AppKit
 
 struct ImageDownloader: ImageLoading
 {
+    var cache = ImageCache()
+    
     enum ImageError: Error
     {
         case unknown
@@ -18,8 +20,14 @@ struct ImageDownloader: ImageLoading
     
     func loadImage(from url: URL, completion: @escaping (Result<NSImage, Error>) -> Void)
     {
+        if let image = cache.cachedImage(for: url) {
+            completion(.success(image))
+            return
+        }
+        
         let task = URLSession.shared.downloadTask(with: url) { (location, response, error) in
             if let location = location, let image = NSImage(contentsOf: location) {
+                self.cache.cacheImage(image, with: url)
                 completion(.success(image))
             } else if let error = error {
                 completion(.failure(error))

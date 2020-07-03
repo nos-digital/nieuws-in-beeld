@@ -12,6 +12,7 @@
 		4355912D24AF30F400BC7765 /* InsetLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4355912C24AF30F400BC7765 /* InsetLabel.swift */; };
 		4355913124AF33BE00BC7765 /* ImageLoading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4355913024AF33BE00BC7765 /* ImageLoading.swift */; };
 		4355913324AF340700BC7765 /* ImageDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4355913224AF340700BC7765 /* ImageDownloader.swift */; };
+		4355913524AF59FC00BC7765 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4355913424AF59FC00BC7765 /* ImageCache.swift */; };
 		43624BF524AA8E4200E7F33F /* NieuwsInBeeldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43624BF424AA8E4200E7F33F /* NieuwsInBeeldView.swift */; };
 		43624BFC24AA901500E7F33F /* Photo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43624BFB24AA901500E7F33F /* Photo.swift */; };
 		43624BFF24AA91A500E7F33F /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43624BFE24AA91A500E7F33F /* APIClient.swift */; };
@@ -25,6 +26,7 @@
 		4355912C24AF30F400BC7765 /* InsetLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsetLabel.swift; sourceTree = "<group>"; };
 		4355913024AF33BE00BC7765 /* ImageLoading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoading.swift; sourceTree = "<group>"; };
 		4355913224AF340700BC7765 /* ImageDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDownloader.swift; sourceTree = "<group>"; };
+		4355913424AF59FC00BC7765 /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
 		43624BE724AA8E2900E7F33F /* NOSNieuwsInBeeld.saver */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NOSNieuwsInBeeld.saver; sourceTree = BUILT_PRODUCTS_DIR; };
 		43624BEE24AA8E2900E7F33F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		43624BF424AA8E4200E7F33F /* NieuwsInBeeldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NieuwsInBeeldView.swift; sourceTree = "<group>"; };
@@ -69,6 +71,7 @@
 			children = (
 				4355913024AF33BE00BC7765 /* ImageLoading.swift */,
 				4355913224AF340700BC7765 /* ImageDownloader.swift */,
+				4355913424AF59FC00BC7765 /* ImageCache.swift */,
 			);
 			path = Images;
 			sourceTree = "<group>";
@@ -214,6 +217,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4355913524AF59FC00BC7765 /* ImageCache.swift in Sources */,
 				43624BFC24AA901500E7F33F /* Photo.swift in Sources */,
 				4355912924AF300500BC7765 /* AspectFillImageView.swift in Sources */,
 				43624BF524AA8E4200E7F33F /* NieuwsInBeeldView.swift in Sources */,
