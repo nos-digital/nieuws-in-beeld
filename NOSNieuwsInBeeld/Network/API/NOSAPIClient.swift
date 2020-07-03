@@ -6,7 +6,7 @@
 //  Copyright © 2020 App Department. All rights reserved.
 //
 
-import ScreenSaver
+import AppKit
 
 
 struct NOSAPIClient: APIClient
@@ -30,24 +30,6 @@ struct NOSAPIClient: APIClient
                     completion(.failure(error))
                 }
             } else if let error = error {
-                completion(.failure(error))
-            } else {
-                completion(.failure(NetworkError.unknown))
-            }
-        }
-        
-        task.resume()
-    }
-    
-    func loadImage(with url: URL, completion: @escaping (Result<NSImage, Error>) -> Void)
-    {
-        let task = URLSession.shared.downloadTask(with: url) { (location, response, error) in
-            if let location = location,
-                let image = NSImage(contentsOf: location)
-            {
-                completion(.success(image))
-            } else if let error = error
-            {
                 completion(.failure(error))
             } else {
                 completion(.failure(NetworkError.unknown))

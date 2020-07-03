@@ -8,15 +8,17 @@
 
 import ScreenSaver
 
+
 class NieuwsInBeeldView: ScreenSaverView
 {
     private let api: APIClient = NOSAPIClient()
-    private let slideDuration: TimeInterval = 10
-    private let crossFadeDuration: TimeInterval = 1
+    private let imageLoader: ImageLoading = ImageDownloader()
     
     override init?(frame: NSRect, isPreview: Bool)
     {
         super.init(frame: frame, isPreview: isPreview)
+        
+        wantsLayer = true
         
         animationTimeInterval = 1.0 / 30.0
         
@@ -50,57 +52,45 @@ class NieuwsInBeeldView: ScreenSaverView
         showPhoto(at: photoIndex)
     }
     
-    private func showPhoto(at index: Int)
+    private func preloadPhoto(at index: Int)
     {
-        guard 0..<photos.count ~= index else { return }
-        
-        photoIndex = index
-        
-        if currentSlide.viewModel == nil
-        {
-            currentSlide.viewModel = SlideViewModel(photo: photos[index])
-            currentSlide.isHidden = true
-            currentSlide.onImageLoaded = { [weak self] in
-                guard let self = self else { return }
+        loadViewModel(at: index) { [weak self] result in
+            guard let self = self else { return }
+            
+            switch result
+            {
+                case .success(let viewModel):
+                    DispatchQueue.main.async { self.nextSlide.viewModel = viewModel }
                 
-                self.currentSlide.onImageLoaded = nil
-                self.currentSlide.animateImage(duration: self.slideDuration + self.crossFadeDuration)
-                NSAnimationContext.runAnimationGroup { context in
-                    context.duration = self.crossFadeDuration
-                    
-                    self.currentSlide.isHidden = false
-                }
-                
-                self.preloadPhoto(at: self.nextPhotoIndex)
+                case .failure:
+                    break // ignore for now
             }
-        }
-        else
-        {
-            nextSlide.animateImage(duration: slideDuration + crossFadeDuration)
-            NSAnimationContext.runAnimationGroup({ context in
-                context.duration = crossFadeDuration
-                
-                currentSlide.alphaValue = 0
-                nextSlide.isHidden = false
-            },
-                                                 completionHandler: {
-                                                    let current = self.currentSlide
-                                                    let next = self.nextSlide
-                                                    
-                                                    current.isHidden = true
-                                                    current.alphaValue = 1
-                                                    
-                                                    self.currentSlide = next
-                                                    self.nextSlide = current
-                                                    self.preloadPhoto(at: self.nextPhotoIndex)
-            })
         }
     }
     
-    private func preloadPhoto(at index: Int)
+    private func loadViewModel(at index: Int, completion: @escaping (Result<SlideViewModel, Error>) -> Void)
     {
         guard 0..<photos.count ~= index else { return }
-        nextSlide.viewModel = SlideViewModel(photo: photos[index])
+
+        let photo = photos[index]
+        
+        guard let url = photo.formats.last?.url.jpg else { return }
+        
+        imageLoader.loadImage(from: url) { result in
+            switch result
+            {
+                case .success(let image):
+                    let viewModel = SlideViewModel(image: image,
+                                                                 title: photo.title,
+                                                                 description: photo.description,
+                                                                 copyright: photo.copyright)
+                    
+                    completion(.success(viewModel))
+                
+                case .failure(let error):
+                    completion(.failure(error))
+            }
+        }
     }
     
     // MARK: Subviews
@@ -119,17 +109,79 @@ class NieuwsInBeeldView: ScreenSaverView
         [currentSlide, nextSlide].forEach { $0.frame = bounds }
     }
     
-    // MARK: Animations
+    // MARK: Slideshow
     
-    override func startAnimation()
+    private let slideDuration: TimeInterval = 10
+    private let crossFadeDuration: TimeInterval = 1
+    
+    private func showPhoto(at index: Int)
     {
-        super.startAnimation()
+        guard 0..<photos.count ~= index else { return }
+        
+        photoIndex = index
+        
+        if currentSlide.viewModel == nil
+        {
+            showInitialSlide()
+        }
+        else
+        {
+            showNextSlide()
+        }
     }
     
-    override func stopAnimation()
+    private func showInitialSlide()
     {
-        super.stopAnimation()
+        currentSlide.isHidden = true
+        
+        loadViewModel(at: 0) { [weak self] result in
+            guard let self = self else { return }
+        
+            DispatchQueue.main.async {
+                switch result
+                {
+                    case .success(let viewModel):
+                        self.currentSlide.viewModel = viewModel
+                        
+                        self.currentSlide.animateImage(duration: self.slideDuration + self.crossFadeDuration)
+                        NSAnimationContext.runAnimationGroup { context in
+                            context.duration = self.crossFadeDuration
+                            
+                            self.currentSlide.isHidden = false
+                        }
+                        
+                        self.preloadPhoto(at: self.nextPhotoIndex)
+                    
+                    case .failure:
+                        break // ignore for now
+                }
+            }
+        }
     }
+    
+    private func showNextSlide()
+    {
+        nextSlide.animateImage(duration: slideDuration + crossFadeDuration)
+        NSAnimationContext.runAnimationGroup({ context in
+            context.duration = crossFadeDuration
+            
+            currentSlide.alphaValue = 0
+            nextSlide.isHidden = false
+        },
+                                             completionHandler: {
+                                                let current = self.currentSlide
+                                                let next = self.nextSlide
+                                                
+                                                current.isHidden = true
+                                                current.alphaValue = 1
+                                                
+                                                self.currentSlide = next
+                                                self.nextSlide = current
+                                                self.preloadPhoto(at: self.nextPhotoIndex)
+        })
+    }
+    
+    // MARK: ScreenSaver overrides
     
     private var timeElapsed: TimeInterval = 0
     override func animateOneFrame()
@@ -147,4 +199,5 @@ class NieuwsInBeeldView: ScreenSaverView
     
     override var hasConfigureSheet: Bool { false }
     override var configureSheet: NSWindow? { nil }
+    
 }

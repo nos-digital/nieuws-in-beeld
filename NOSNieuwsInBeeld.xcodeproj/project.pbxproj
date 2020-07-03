@@ -10,6 +10,8 @@
 		4355912924AF300500BC7765 /* AspectFillImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4355912824AF300500BC7765 /* AspectFillImageView.swift */; };
 		4355912B24AF308400BC7765 /* GradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4355912A24AF308400BC7765 /* GradientView.swift */; };
 		4355912D24AF30F400BC7765 /* InsetLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4355912C24AF30F400BC7765 /* InsetLabel.swift */; };
+		4355913124AF33BE00BC7765 /* ImageLoading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4355913024AF33BE00BC7765 /* ImageLoading.swift */; };
+		4355913324AF340700BC7765 /* ImageDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4355913224AF340700BC7765 /* ImageDownloader.swift */; };
 		43624BF524AA8E4200E7F33F /* NieuwsInBeeldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43624BF424AA8E4200E7F33F /* NieuwsInBeeldView.swift */; };
 		43624BFC24AA901500E7F33F /* Photo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43624BFB24AA901500E7F33F /* Photo.swift */; };
 		43624BFF24AA91A500E7F33F /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43624BFE24AA91A500E7F33F /* APIClient.swift */; };
@@ -21,6 +23,8 @@
 		4355912824AF300500BC7765 /* AspectFillImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AspectFillImageView.swift; sourceTree = "<group>"; };
 		4355912A24AF308400BC7765 /* GradientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
 		4355912C24AF30F400BC7765 /* InsetLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsetLabel.swift; sourceTree = "<group>"; };
+		4355913024AF33BE00BC7765 /* ImageLoading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoading.swift; sourceTree = "<group>"; };
+		4355913224AF340700BC7765 /* ImageDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDownloader.swift; sourceTree = "<group>"; };
 		43624BE724AA8E2900E7F33F /* NOSNieuwsInBeeld.saver */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NOSNieuwsInBeeld.saver; sourceTree = BUILT_PRODUCTS_DIR; };
 		43624BEE24AA8E2900E7F33F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		43624BF424AA8E4200E7F33F /* NieuwsInBeeldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NieuwsInBeeldView.swift; sourceTree = "<group>"; };
@@ -49,6 +53,24 @@
 				4355912C24AF30F400BC7765 /* InsetLabel.swift */,
 			);
 			path = Generic;
+			sourceTree = "<group>";
+		};
+		4355912E24AF33AA00BC7765 /* API */ = {
+			isa = PBXGroup;
+			children = (
+				43624BFE24AA91A500E7F33F /* APIClient.swift */,
+				43624C0024AA91D400E7F33F /* NOSAPIClient.swift */,
+			);
+			path = API;
+			sourceTree = "<group>";
+		};
+		4355912F24AF33B200BC7765 /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				4355913024AF33BE00BC7765 /* ImageLoading.swift */,
+				4355913224AF340700BC7765 /* ImageDownloader.swift */,
+			);
+			path = Images;
 			sourceTree = "<group>";
 		};
 		43624BDD24AA8E2900E7F33F = {
@@ -99,8 +121,8 @@
 		43624BFD24AA919700E7F33F /* Network */ = {
 			isa = PBXGroup;
 			children = (
-				43624BFE24AA91A500E7F33F /* APIClient.swift */,
-				43624C0024AA91D400E7F33F /* NOSAPIClient.swift */,
+				4355912F24AF33B200BC7765 /* Images */,
+				4355912E24AF33AA00BC7765 /* API */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -198,6 +220,8 @@
 				43624C0124AA91D400E7F33F /* NOSAPIClient.swift in Sources */,
 				4355912B24AF308400BC7765 /* GradientView.swift in Sources */,
 				43624BFF24AA91A500E7F33F /* APIClient.swift in Sources */,
+				4355913324AF340700BC7765 /* ImageDownloader.swift in Sources */,
+				4355913124AF33BE00BC7765 /* ImageLoading.swift in Sources */,
 				4355912D24AF30F400BC7765 /* InsetLabel.swift in Sources */,
 				43812DB724AA96A40074A01E /* SlideView.swift in Sources */,
 			);
