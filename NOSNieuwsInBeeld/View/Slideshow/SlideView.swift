@@ -37,7 +37,7 @@ class SlideView: NSView
     
     var api: APIClient
     
-    init(api: APIClient = NOSAPIClient())
+    init(api: APIClient)
     {
         self.api = api
         
@@ -77,6 +77,7 @@ class SlideView: NSView
         shadow.shadowOffset = NSSize(width: 0, height: 1)
         return shadow
     }()
+    
     private lazy var titleLabel: NSTextField = {
         let label = NSTextField(labelWithString: "")
         label.font = .systemFont(ofSize: 40, weight: .bold)
@@ -150,9 +151,7 @@ class SlideView: NSView
 
     func animateImage(duration: TimeInterval)
     {
-        var origin: CGPoint
-        var zoom: CGPoint
-        var move: CGPoint
+        var origin, zoom, move: CGPoint
 
         let size = bounds.size
         let optimus = CGSize(width: size.width * scaleRatio, height: size.height * scaleRatio)
@@ -197,25 +196,29 @@ class SlideView: NSView
         let zoomedTransform = transform
         let standardTransform = CGAffineTransform.identity
 
-        let startTransform: CATransform3D
-        let finishTransform: CATransform3D
+        let start, finish: CATransform3D
 
         if Int.random(in: 0...1) == 0 {
-            startTransform = CATransform3DMakeAffineTransform(standardTransform)
-            finishTransform = CATransform3DMakeAffineTransform(zoomedTransform)
+            start = CATransform3DMakeAffineTransform(standardTransform)
+            finish = CATransform3DMakeAffineTransform(zoomedTransform)
         } else {
-            startTransform = CATransform3DMakeAffineTransform(zoomedTransform)
-            finishTransform = CATransform3DMakeAffineTransform(standardTransform)
+            start = CATransform3DMakeAffineTransform(zoomedTransform)
+            finish = CATransform3DMakeAffineTransform(standardTransform)
         }
         
         imageView.frame = CGRect(origin: origin, size: optimus)
         
+        animateImage(from: start, to: finish, duration: duration)
+    }
+    
+    private func animateImage(from: CATransform3D, to: CATransform3D, duration: TimeInterval)
+    {
         let animation = CABasicAnimation(keyPath: "transform")
-        animation.duration = duration + 2
+        animation.duration = duration
         animation.fillMode = .forwards
         animation.timingFunction = .init(name: .linear)
-        animation.fromValue = startTransform
-        animation.toValue = finishTransform
+        animation.fromValue = from
+        animation.toValue = to
         animation.isRemovedOnCompletion = true
         imageView.layer?.add(animation, forKey: "pan")
     }
