@@ -17,104 +17,6 @@ struct SlideViewModel
     var copyright: String
 }
 
-private class ImageView: NSView
-{
-    var image: NSImage? {
-        didSet {
-            layer?.contents = image
-        }
-    }
-    
-    override init(frame frameRect: NSRect)
-    {
-        super.init(frame: frameRect)
-        wantsLayer = true
-        layer?.contentsGravity = .resizeAspectFill
-    }
-    
-    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
-}
-
-private class GradientView: NSView
-{
-    let gradientLayer = CAGradientLayer()
-    
-    var colors: [NSColor] = [] {
-        didSet {
-            gradientLayer.colors = colors.map { $0.cgColor }
-        }
-    }
-    var locations: [NSNumber] = [] {
-        didSet {
-            gradientLayer.locations = locations
-        }
-    }
-    
-    override init(frame frameRect: NSRect)
-    {
-        super.init(frame: frameRect)
-        
-        layer = gradientLayer
-    }
-    
-    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
-    
-    override func layout()
-    {
-        super.layout()
-        
-        gradientLayer.frame = bounds
-    }
-}
-
-private class InsetLabel: NSView
-{
-    private let label: NSTextField = {
-        let label = NSTextField(labelWithString: "")
-        label.font = .systemFont(ofSize: 14, weight: .bold)
-        label.textColor = .white
-        label.alignment = .center
-        return label
-    }()
-    
-    var insets: NSDirectionalEdgeInsets = .init() {
-        didSet {
-            labelLeadingConstraint.constant = insets.leading
-            labelTrailingConstraint.constant = -insets.trailing
-            labelTopConstraint.constant = insets.top
-            labelBottomConstraint.constant = -insets.bottom
-        }
-    }
-    
-    var stringValue: String {
-        get { label.stringValue }
-        set { label.stringValue = newValue }
-    }
-    
-    private lazy var labelLeadingConstraint = label.leadingAnchor.constraint(equalTo: leadingAnchor)
-    private lazy var labelTrailingConstraint = label.trailingAnchor.constraint(equalTo: trailingAnchor)
-    private lazy var labelTopConstraint = label.topAnchor.constraint(equalTo: topAnchor)
-    private lazy var labelBottomConstraint = label.bottomAnchor.constraint(equalTo: bottomAnchor)
-    
-    override init(frame frameRect: NSRect)
-    {
-        super.init(frame: frameRect)
-    
-        wantsLayer = true
-        layer?.backgroundColor = NSColor.black.withAlphaComponent(0.4).cgColor
-    
-        label.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(label)
-        
-        NSLayoutConstraint.activate([
-            labelLeadingConstraint, labelTrailingConstraint,
-            labelTopConstraint, labelBottomConstraint
-        ])
-    }
-    
-    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
-}
-
 class SlideView: NSView
 {
     var onImageLoaded: (() -> Void)?
@@ -166,7 +68,7 @@ class SlideView: NSView
     
     // MARK: Subviews
     
-    private let imageView = ImageView()
+    private let imageView = AspectFillImageView()
     
     private let textShadow: NSShadow = {
         let shadow = NSShadow()
@@ -200,6 +102,9 @@ class SlideView: NSView
     private let copyrightLabel: InsetLabel = {
         let label = InsetLabel()
         label.insets = NSDirectionalEdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5)
+        label.font = .systemFont(ofSize: 14, weight: .bold)
+        label.textColor = .white
+        label.alignment = .center
         return label
     }()
     
