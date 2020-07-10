@@ -221,6 +221,11 @@ class SlideView: NSView
     private func sizeDidChange(from: CGSize, to: CGSize)
     {
         hideLabels = to.width < 600 || to.height < 400
+        
+        if let animation = imageView.layer?.animation(forKey: "pan") {
+            imageView.layer?.removeAllAnimations()
+            animateImage(duration: animation.duration)
+        }
     }
     
     private var hideLabels: Bool = false {

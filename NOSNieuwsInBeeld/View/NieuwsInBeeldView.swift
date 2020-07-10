@@ -18,15 +18,36 @@ class NieuwsInBeeldView: ScreenSaverView
     {
         super.init(frame: frame, isPreview: isPreview)
         
+        setup()
+    }
+    
+    required init?(coder: NSCoder)
+    {
+        super.init(coder: coder)
+        
+        setup()
+    }
+    
+    private func setup()
+    {
         wantsLayer = true
         
         animationTimeInterval = 1.0 / 30.0
         
         loadPhotos()
         setupSubviews()
+        
+        #if APP
+        startCustomTimer()
+        #endif
     }
     
-    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+    deinit
+    {
+        #if APP
+        slideTimer?.invalidate()
+        #endif
+    }
     
     // MARK: Data
     
@@ -193,11 +214,19 @@ class NieuwsInBeeldView: ScreenSaverView
             showPhoto(at: nextPhotoIndex)
             timeElapsed = 0
         }
-        
-        setNeedsDisplay(bounds)
     }
+    
+    #if APP
+    private var slideTimer: Timer?
+    private func startCustomTimer()
+    {
+        slideTimer = Timer.scheduledTimer(withTimeInterval: slideDuration, repeats: true, block: { [weak self] (_) in
+            guard let self = self else { return }
+            self.showPhoto(at: self.nextPhotoIndex)
+        })
+    }
+    #endif
     
     override var hasConfigureSheet: Bool { false }
     override var configureSheet: NSWindow? { nil }
-    
 }
