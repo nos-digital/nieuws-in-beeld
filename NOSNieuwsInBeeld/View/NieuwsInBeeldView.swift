@@ -116,8 +116,8 @@ class NieuwsInBeeldView: ScreenSaverView
     
     // MARK: Subviews
     
-    private lazy var currentSlide = SlideView(api: api)
-    private lazy var nextSlide = SlideView(api: api)
+    private lazy var currentSlide = SlideView(frame: bounds, api: api)
+    private lazy var nextSlide = SlideView(frame: bounds, api: api)
 
     private func setupSubviews()
     {

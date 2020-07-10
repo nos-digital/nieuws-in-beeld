@@ -34,11 +34,11 @@ class SlideView: NSView
     
     var api: APIClient
     
-    init(api: APIClient)
+    init(frame: CGRect, api: APIClient)
     {
         self.api = api
         
-        super.init(frame: .zero)
+        super.init(frame: frame)
         
         setupSubviews()
     }
