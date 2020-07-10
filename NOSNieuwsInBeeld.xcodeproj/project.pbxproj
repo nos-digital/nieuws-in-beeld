@@ -122,6 +122,7 @@
 		435EA1AF24B86693009C2643 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				43624BEE24AA8E2900E7F33F /* Info.plist */,
 				435EA1B024B8671A009C2643 /* thumbnail.png */,
 				435EA1B124B8671B009C2643 /* thumbnail@2x.png */,
 			);
@@ -153,7 +154,6 @@
 				43624BFD24AA919700E7F33F /* Network */,
 				43624BFA24AA900900E7F33F /* Model */,
 				43624BF724AA8FD900E7F33F /* View */,
-				43624BEE24AA8E2900E7F33F /* Info.plist */,
 			);
 			path = NOSNieuwsInBeeld;
 			sourceTree = "<group>";
@@ -514,7 +514,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = J5YAYB645T;
-				INFOPLIST_FILE = NOSNieuwsInBeeld/Info.plist;
+				INFOPLIST_FILE = NOSNieuwsInBeeld/Resources/Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Screen Savers";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -536,7 +536,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = J5YAYB645T;
-				INFOPLIST_FILE = NOSNieuwsInBeeld/Info.plist;
+				INFOPLIST_FILE = NOSNieuwsInBeeld/Resources/Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Screen Savers";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
