@@ -201,4 +201,31 @@ class SlideView: NSView
         animation.isRemovedOnCompletion = true
         imageView.layer?.add(animation, forKey: "pan")
     }
+    
+    // MARK: Bounds observations
+    
+    override var frame: NSRect {
+        didSet {
+            guard frame.size != oldValue.size else { return }
+            sizeDidChange(from: oldValue.size, to: frame.size)
+        }
+    }
+    
+    override var bounds: NSRect {
+        didSet {
+            guard bounds.size != oldValue.size else { return }
+            sizeDidChange(from: oldValue.size, to: bounds.size)
+        }
+    }
+    
+    private func sizeDidChange(from: CGSize, to: CGSize)
+    {
+        hideLabels = to.width < 600 || to.height < 400
+    }
+    
+    private var hideLabels: Bool = false {
+        didSet {
+            [titleLabel, descriptionLabel, copyrightLabel, gradient].forEach { $0.isHidden = hideLabels }
+        }
+    }
 }
