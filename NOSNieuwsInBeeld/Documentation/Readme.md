@@ -12,3 +12,7 @@ Nieuws in Beeld is a Mac screen saver that uses the NOS Nieuws in Beeld feed to 
 ## Compaitility 
 
 Nieuws in Beeld is available for macOS Cataline (10.15).
+
+## License
+
+[MIT License](https://github.com/nos-digital/nieuws-in-beeld/blob/master/LICENSE)
