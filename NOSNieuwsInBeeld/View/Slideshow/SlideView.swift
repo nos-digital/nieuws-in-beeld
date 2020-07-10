@@ -41,6 +41,7 @@ class SlideView: NSView
         super.init(frame: frame)
         
         setupSubviews()
+        sizeDidChange(from: .zero, to: frame.size)
     }
     
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
