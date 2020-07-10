@@ -51,7 +51,7 @@
 		435EA1A024B85F2C009C2643 /* NOSNieuwsInBeeldApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NOSNieuwsInBeeldApp.entitlements; sourceTree = "<group>"; };
 		435EA1B024B8671A009C2643 /* thumbnail.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = thumbnail.png; sourceTree = "<group>"; };
 		435EA1B124B8671B009C2643 /* thumbnail@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "thumbnail@2x.png"; sourceTree = "<group>"; };
-		43624BE724AA8E2900E7F33F /* NOSNieuwsInBeeld.saver */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NOSNieuwsInBeeld.saver; sourceTree = BUILT_PRODUCTS_DIR; };
+		43624BE724AA8E2900E7F33F /* Nieuws in Beeld.saver */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Nieuws in Beeld.saver"; sourceTree = BUILT_PRODUCTS_DIR; };
 		43624BEE24AA8E2900E7F33F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		43624BF424AA8E4200E7F33F /* NieuwsInBeeldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NieuwsInBeeldView.swift; sourceTree = "<group>"; };
 		43624BFB24AA901500E7F33F /* Photo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Photo.swift; sourceTree = "<group>"; };
@@ -141,7 +141,7 @@
 		43624BE824AA8E2900E7F33F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				43624BE724AA8E2900E7F33F /* NOSNieuwsInBeeld.saver */,
+				43624BE724AA8E2900E7F33F /* Nieuws in Beeld.saver */,
 				435EA19624B85F2A009C2643 /* NOSNieuwsInBeeldApp.app */,
 			);
 			name = Products;
@@ -238,7 +238,7 @@
 			);
 			name = NOSNieuwsInBeeld;
 			productName = NOSNieuwsInBeeld;
-			productReference = 43624BE724AA8E2900E7F33F /* NOSNieuwsInBeeld.saver */;
+			productReference = 43624BE724AA8E2900E7F33F /* Nieuws in Beeld.saver */;
 			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
@@ -522,7 +522,7 @@
 					"@loader_path/../Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.app-department.NOSNieuwsInBeeld";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Nieuws in Beeld";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = saver;
@@ -544,7 +544,7 @@
 					"@loader_path/../Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.app-department.NOSNieuwsInBeeld";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Nieuws in Beeld";
 				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = saver;
 			};
